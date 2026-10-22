@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quick Quiz</title>
+  <title>اختبار سريع</title>
+  <link rel="icon" href="logo.svg">
   <link rel="stylesheet" href="app.css">
 
-  <!-- استيراد وتكوين Firebase مباشرة من الشاشة الظاهرة -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, where, onSnapshot } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDjJWxJVtrwURk2oBvVGy-ngLs9oSceJTs",
@@ -21,11 +21,9 @@
       measurementId: "G-7KWR5LVQZV"
     };
 
-    // تهيئة Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // ربطه بنافذة المتصفح لكي يستطيع ملف app.js استخدامه
     window.db = db;
     window.collection = collection;
     window.addDoc = addDoc;
@@ -33,15 +31,17 @@
     window.query = query;
     window.orderBy = orderBy;
     window.limit = limit;
+    window.where = where;
+    window.onSnapshot = onSnapshot;
   </script>
 </head>
 <body>
   <main class="container">
 
-    <!-- Screen 1: enter name -->
+    <!-- Screen 1: start -->
     <div id="start-screen" class="start-wrap screen active">
-      <section class="card shown name-card">
-        <div class="emoji">🧠</div>
+      <section class="card name-card">
+        <img src="logo.svg" alt="شعار اللعبة" class="logo">
         <h1>اختبار سريع</h1>
         <p class="subtitle">أدخل اسمك للبدء</p>
         <p class="note">⚠️ يمكن لكل لاعب اللعب مرة واحدة فقط، فاكتب اسمك بشكل صحيح.</p>
@@ -50,41 +50,52 @@
         <button id="start-btn" class="btn primary">ابدأ</button>
       </section>
 
-      <aside class="card shown info-card">
+      <aside class="card info-card">
         <div class="info-label">عدد الذين لعبوا</div>
         <div id="play-count" class="play-count">0</div>
         <div class="team-title">سنة أولى ماستر</div>
-        <ul class="team">
-          <li>بن موفق عدلان</li>
-          <li>يزيد عبد الرحمان</li>
-          <li>مهدي بن إدريس</li>
-          <li>لحسن</li>
-        </ul>
       </aside>
     </div>
 
-    <!-- Screen 2: questions -->
-    <section id="game-screen" class="card screen">
-      <div class="top-row">
-        <span id="player-label"></span>
-        <span id="progress"></span>
-      </div>
-      <div class="progress-bar"><div id="progress-fill"></div></div>
-      <div id="timer" class="timer">15</div>
-      <h2 id="question"></h2>
-      <div id="options" class="options"></div>
-      <p id="feedback"></p>
-    </section>
+    <!-- Screen 2: quiz with observer -->
+    <div id="game-screen" class="game-wrap screen">
+      <section class="card quiz-card">
+        <div class="top-row">
+          <span id="player-label"></span>
+          <span id="progress"></span>
+        </div>
+        <div class="progress-bar"><div id="progress-fill"></div></div>
+        <div id="timer" class="timer">30</div>
+        <h2 id="question"></h2>
+        <div id="options" class="options"></div>
+        <p id="feedback"></p>
+      </section>
 
-    <!-- Screen 3: results and podium -->
+      <aside id="coach" class="card coach-card mood-calm">
+        <div id="coach-face" class="coach-face">😊</div>
+        <div class="coach-name">المراقب</div>
+        <div id="coach-msg" class="bubble">حظاً موفقاً!</div>
+      </aside>
+    </div>
+
+    <!-- Screen 3: results -->
     <section id="end-screen" class="card wide screen">
       <div class="emoji" id="end-emoji"></div>
-      <h1>Quiz finished!</h1>
+      <h1>انتهى الاختبار!</h1>
       <p id="final-score" class="score"></p>
       <p id="my-rank" class="subtitle"></p>
       <p id="winner-msg" class="winner-msg"></p>
       <div id="podium" class="podium"></div>
-      <button id="restart-btn" class="btn primary">Play Again</button>
+
+      <div class="finale">
+        <div class="finale-title">شكراً لمشاركتكم</div>
+        <div class="finale-names">
+          <span class="fname" style="--d: 1.2s">عدلان</span>
+          <span class="fname" style="--d: 1.8s">رحمون</span>
+        </div>
+      </div>
+
+      <button id="restart-btn" class="btn primary">العب مرة أخرى</button>
     </section>
 
   </main>

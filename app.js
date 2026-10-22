@@ -1,24 +1,55 @@
 const questions = [
   { q: "مصطلح “الهندرة” (BPR) الذي يعتبر من أهم المتطلبات التنظيمية للإدارة الإلكترونية يعني:", options: ["شراء حواسيب وخوادم جديدة لجميع الأقسام.", "مكننة الإجراءات الإدارية كما هي دون تغيير.", "إعادة هندسة العمليات وتبسيط الإجراءات وحذف الخطوات الزائدة قبل رقمنتها.", "تغيير المدير العام والإدارة العليا للمؤسسة."], answer: 2 },
   { q: "ما هو التحدي الأكبر والأصعب الذي يواجه مشاريع الإدارة الإلكترونية من الجانب “البشري”؟", options: ["نقص الميزانية المخصصة لرواتب العمال.", "عدم توفر شبكة إنترنت سريعة في المنازل.", "صعوبة إيجاد مهندسي إعلام آلي.", "مقاومة التغيير والخوف من التكنولوجيا لدى الموظفين المعتادين على الورق."], answer: 3 },
-  { q: "لتفادي مشكلة “الجزر المعلوماتية” (أنظمة وبرمجيات لا تتواصل مع بعضها بين الوزارات), يجب الاعتماد على:", options: ["توحيد ألوان وتصميم المواقع الحكومية.", "فرض نظام عقوبات على الموظفين غير المتفاعلين.", "إرساء التوافق البيني (Interoperability) بين الإدارات.", "الاعتماد الكلي على الشبكات الاجتماعية للتواصل."], answer: 2 },
+  { q: "لتفادي مشكلة “الجزر المعلوماتية” (أنظمة وبرمجيات لا تتواصل مع بعضها بين الوزارات)، يجب الاعتماد على:", options: ["توحيد ألوان وتصميم المواقع الحكومية.", "فرض نظام عقوبات على الموظفين غير المتفاعلين.", "إرساء التوافق البيني (Interoperability) بين الإدارات.", "الاعتماد الكلي على الشبكات الاجتماعية للتواصل."], answer: 2 },
   { q: "ما هو التشريع الجزائري الذي يعطي للوثيقة الإلكترونية نفس الحجية القانونية للوثيقة الورقية التقليدية؟", options: ["قانون المالية لسنة 2010.", "القانون 15-04 المتعلق بالتوقيع والتصديق الإلكترونيين.", "قانون الوظيفة العمومية لعام 2006.", "قانون حماية المستهلك وقمع الغش."], answer: 1 },
   { q: "في أي سنة أطلق الصندوق الوطني للتأمينات الاجتماعية (CNAS) نظام بطاقة “الشفاء” بشكل رسمي؟", options: ["1999", "2002", "2007", "2012"], answer: 2 },
   { q: "أي من المنصات الرقمية التالية التابعة لـ (CNAS) موجهة خصيصاً لتسهيل عمل أرباب العمل (الشركات)؟", options: ["فضاء الهناء.", "بوابة الشفاء المفتوحة.", "المنصة الوطنية للعطل المرضية.", "بوابة التصريح عن بعد (Télé-déclaration)."], answer: 3 },
-  { q: "تعتبر إستونيا رائدة عالمياً بفضل شبكتها اللامركزية التي تربط كل وزاراتها ومؤسساتها, وتسمى هذه الشبكة:", options: ["E-Estonia Network.", "X-Road.", "Baltic Data Center.", "Y-Connect."], answer: 1 },
-  { q: "لضمان أقصى درجات الأمن والسرية للسجلات الطبية والمالية للمواطنين ومنع تزويرها, تعتمد إستونيا تقنية:", options: ["الذكاء الاصطناعي التوليدي (GenAI).", "الحوسبة الكمية (Quantum Computing).", "البلوكتشين (Blockchain) وتحديداً (KSI Blockchain).", "الميتافيرس الصحي (Health Metaverse)."], answer: 2 },
-  { q: "في مراحل تطور الإدارة الإلكترونية, المرحلة التي تركز أساساً على إعطاء “تقارير دورية” للإدارة الوسطى تسمى:", options: ["نظم دعم القرار (DSS).", "نظم المعلومات الإدارية (MIS).", "المعالجة الآلية للبيانات (EDP).", "الإدارة المتكاملة عبر الإنترنت (Web-based Management)."], answer: 1 },
-  { q: "أي من العبارات التالية يصف بدقة الفرق بين “الحكومة الإلكترونية” و“الحوكمة الإلكترونية”؟", options: ["هما مصطلحان مترادفان تماماً ولا يوجد فرق بينهما.", "الحكومة تستخدم الحواسيب, بينما الحوكمة تستخدم الهواتف الذكية.", "الحكومة هي تحويل الخدمة لخدمة رقمية, بينما الحوكمة هي استخدام التكنولوجيا لتعزيز الشفافية والمساءلة وإشراك المواطن.", "الحوكمة تسبق دائماً الحكومة في مراحل التطور التكنولوجي."], answer: 2 }
+  { q: "تعتبر إستونيا رائدة عالمياً بفضل شبكتها اللامركزية التي تربط كل وزاراتها ومؤسساتها، وتسمى هذه الشبكة:", options: ["E-Estonia Network.", "X-Road.", "Baltic Data Center.", "Y-Connect."], answer: 1 },
+  { q: "لضمان أقصى درجات الأمن والسرية للسجلات الطبية والمالية للمواطنين ومنع تزويرها، تعتمد إستونيا تقنية:", options: ["الذكاء الاصطناعي التوليدي (GenAI).", "الحوسبة الكمية (Quantum Computing).", "البلوكتشين (Blockchain) وتحديداً (KSI Blockchain).", "الميتافيرس الصحي (Health Metaverse)."], answer: 2 },
+  { q: "في مراحل تطور الإدارة الإلكترونية، المرحلة التي تركز أساساً على إعطاء “تقارير دورية” للإدارة الوسطى تسمى:", options: ["نظم دعم القرار (DSS).", "نظم المعلومات الإدارية (MIS).", "المعالجة الآلية للبيانات (EDP).", "الإدارة المتكاملة عبر الإنترنت (Web-based Management)."], answer: 1 },
+  { q: "أي من العبارات التالية يصف بدقة الفرق بين “الحكومة الإلكترونية” و“الحوكمة الإلكترونية”؟", options: ["هما مصطلحان مترادفان تماماً ولا يوجد فرق بينهما.", "الحكومة تستخدم الحواسيب، بينما الحوكمة تستخدم الهواتف الذكية.", "الحكومة هي تحويل الخدمة لخدمة رقمية، بينما الحوكمة هي استخدام التكنولوجيا لتعزيز الشفافية والمساءلة وإشراك المواطن.", "الحوكمة تسبق دائماً الحكومة في مراحل التطور التكنولوجي."], answer: 2 }
 ];
 
-const TIME_PER_QUESTION = 31;
-const $ = id => document.getElementById(id);
+const TIME_PER_QUESTION = 30;
 const PLAYED_KEY = "quickQuizPlayed";
+const $ = id => document.getElementById(id);
+
+let playerName = "";
+let current = 0;
+let score = 0;
+let lastEntry = null;
+let timerInterval = null;
+let timeLeft = TIME_PER_QUESTION;
+let answered = false;
+let totalTime = 0;
+let questionStart = 0;
+
+const fmtScore = (s, t) => `\u2066${s} / ${t}\u2069`;
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+// Observer
+const COACH_FACES = { calm: "😊", focus: "🧐", worried: "😟", anxious: "😰", happy: "😄", sad: "😕" };
+const COACH_TIPS = [
+  "لا تتوتر، ركّز على السؤال جيداً.",
+  "اقرأ جميع الخيارات قبل أن تجيب.",
+  "خذ نفساً عميقاً، أنت تعرف الإجابة!",
+  "استبعد الخيارات الخاطئة أولاً.",
+  "ثق بإجابتك الأولى غالباً.",
+  "الوقت يكفيك، لا تستعجل."
+];
+
+function setCoach(mood, msg) {
+  $("coach").className = `card coach-card mood-${mood}`;
+  $("coach-face").textContent = COACH_FACES[mood];
+  $("coach-msg").textContent = msg;
+}
 
 function normalizeName(name) {
   return name.trim().toLowerCase();
 }
 
+// Local check (this browser)
 function hasPlayed(name) {
   try {
     const list = JSON.parse(localStorage.getItem(PLAYED_KEY)) || [];
@@ -39,18 +70,23 @@ function markPlayed(name) {
   } catch (e) {}
 }
 
-let playerName = "";
-let current = 0;
-let score = 0;
-let lastEntry = null;
-let timerInterval = null;
-let timeLeft = TIME_PER_QUESTION;
-let answered = false;
-let totalTime = 0;
-let questionStart = 0;
+// Cloud check (any device)
+async function alreadyPlayedInCloud(name) {
+  if (!window.db) return false;
+  try {
+    const q = window.query(
+      window.collection(window.db, "leaderboard"),
+      window.where("nameKey", "==", normalizeName(name))
+    );
+    const snap = await window.getDocs(q);
+    return !snap.empty;
+  } catch (e) {
+    console.error("خطأ في التحقق من الأسماء:", e);
+    return false;
+  }
+}
 
-const fmtScore = (s, t) => `\u2066${s} / ${t}\u2069`;
-
+// Higher percentage first, then faster time, then earlier date
 function compareEntries(a, b) {
   const pa = a.score / a.total;
   const pb = b.score / b.total;
@@ -67,14 +103,21 @@ function showScreen(id) {
   });
 }
 
-function startQuiz() {
+// Start
+async function startQuiz() {
   const name = $("player-name").value.trim();
   if (name === "") {
     $("name-error").textContent = "الرجاء كتابة اسمك أولاً.";
     $("player-name").focus();
     return;
   }
-  if (hasPlayed(name)) {
+
+  $("start-btn").disabled = true;
+  $("name-error").textContent = "جارٍ التحقق من الاسم...";
+  const played = hasPlayed(name) || await alreadyPlayedInCloud(name);
+  $("start-btn").disabled = false;
+
+  if (played) {
     $("name-error").textContent = "هذا الاسم لعب بالفعل. يمكن لكل لاعب اللعب مرة واحدة فقط.";
     $("player-name").focus();
     return;
@@ -96,6 +139,7 @@ $("player-name").addEventListener("keydown", e => {
   if (e.key === "Enter") startQuiz();
 });
 
+// Timer
 function startTimer() {
   stopTimer();
   timeLeft = TIME_PER_QUESTION;
@@ -121,31 +165,15 @@ function updateTimerDisplay() {
   const t = $("timer");
   t.textContent = timeLeft;
   t.classList.toggle("warn", timeLeft <= 3);
+
+  // Observer reacts as time runs out
+  if (timeLeft === 20) setCoach("focus", "ركّز، لا يزال أمامك وقت كافٍ.");
+  if (timeLeft === 10) setCoach("worried", "بقي 10 ثوانٍ، خذ نفساً وقرر بهدوء.");
+  if (timeLeft === 5) setCoach("anxious", "أسرع قليلاً! بقي القليل...");
+  if (timeLeft === 3) setCoach("anxious", "بسرعة! اختر الآن!");
 }
 
-function timeUp() {
-  if (answered) return;
-  answered = true;
-  totalTime += TIME_PER_QUESTION * 1000;
-  const item = questions[current];
-  const buttons = $("options").querySelectorAll("button");
-  buttons.forEach(b => (b.disabled = true));
-  buttons[item.answer].classList.add("correct");
-  $("feedback").textContent = `⏰ انقضى الوقت! الإجابة الصحيحة هي: ${item.options[item.answer]}`;
-  nextAfterDelay();
-}
-
-function nextAfterDelay() {
-  setTimeout(() => {
-    current++;
-    if (current < questions.length) {
-      showQuestion();
-    } else {
-      finishQuiz();
-    }
-  }, 1300);
-}
-
+// Questions
 function showQuestion() {
   answered = false;
   questionStart = Date.now();
@@ -164,7 +192,21 @@ function showQuestion() {
     $("options").appendChild(btn);
   });
 
+  setCoach("calm", pick(COACH_TIPS));
   startTimer();
+}
+
+function timeUp() {
+  if (answered) return;
+  answered = true;
+  totalTime += TIME_PER_QUESTION * 1000;
+  const item = questions[current];
+  const buttons = $("options").querySelectorAll("button");
+  buttons.forEach(b => (b.disabled = true));
+  buttons[item.answer].classList.add("correct");
+  $("feedback").textContent = `⏰ انقضى الوقت! الإجابة الصحيحة هي: ${item.options[item.answer]}`;
+  setCoach("sad", "انتهى الوقت! لا تقلق، ركّز في السؤال القادم.");
+  nextAfterDelay();
 }
 
 function choose(index, clickedBtn) {
@@ -181,20 +223,40 @@ function choose(index, clickedBtn) {
     score++;
     clickedBtn.classList.add("correct");
     $("feedback").textContent = "✅ إجابة صحيحة!";
+    setCoach("happy", pick(["أحسنت! استمر هكذا 👏", "ممتاز! إجابة صحيحة 🎯", "رائع! أنت تسير بثبات 💪"]));
   } else {
     clickedBtn.classList.add("wrong");
     buttons[item.answer].classList.add("correct");
     $("feedback").textContent = `❌ إجابة خاطئة! الصحيحة هي: ${item.options[item.answer]}`;
+    setCoach("sad", pick(["لا بأس، ركّز في السؤال القادم 💪", "ليس هذه المرة، لكن لا تستسلم!"]));
   }
 
   nextAfterDelay();
 }
 
-// دالة إنهاء الاختبار وإرسال النتيجة إلى سحابة Firebase
+function nextAfterDelay() {
+  setTimeout(() => {
+    current++;
+    if (current < questions.length) {
+      showQuestion();
+    } else {
+      finishQuiz();
+    }
+  }, 1300);
+}
+
+// End of quiz: save to the cloud, then show results
 async function finishQuiz() {
   stopTimer();
-  lastEntry = { name: playerName, score: score, total: questions.length, timeMs: totalTime, date: Date.now() };
-  
+  lastEntry = {
+    name: playerName,
+    nameKey: normalizeName(playerName),
+    score: score,
+    total: questions.length,
+    timeMs: totalTime,
+    date: Date.now()
+  };
+
   try {
     if (window.db) {
       await window.addDoc(window.collection(window.db, "leaderboard"), lastEntry);
@@ -203,35 +265,39 @@ async function finishQuiz() {
     console.error("خطأ في حفظ النتيجة بالسحابة:", e);
   }
 
-  loadAndRenderLeaderboard();
+  await loadAndRenderLeaderboard();
   showScreen("end-screen");
 }
 
-// دالة جلب النتائج من السحابة وعرض لوحة الأوائل والمنصة
 async function loadAndRenderLeaderboard() {
   let list = [];
   try {
     if (window.db) {
-      const q = window.query(window.collection(window.db, "leaderboard"), window.orderBy("score", "desc"), window.limit(20));
-      const querySnapshot = await window.getDocs(q);
-      querySnapshot.forEach((doc) => {
-        list.push(doc.data());
-      });
+      const q = window.query(
+        window.collection(window.db, "leaderboard"),
+        window.orderBy("score", "desc"),
+        window.limit(100)
+      );
+      const snap = await window.getDocs(q);
+      snap.forEach(d => list.push(d.data()));
     }
   } catch (e) {
     console.error("خطأ في جلب لوحة المتصدرين:", e);
   }
 
-  const filteredList = list.filter(e => e.total === questions.length);
-  filteredList.sort(compareEntries);
-  const top = filteredList.slice(0, 10);
-  
-  const rank = top.findIndex(e => e.name === lastEntry.name && e.timeMs === lastEntry.timeMs) + 1;
+  // Make sure the player's own result is included even if the fetch missed it
+  const hasMe = list.some(e => e.date === lastEntry.date && e.name === lastEntry.name);
+  if (!hasMe) list.push(lastEntry);
+
+  const sameQuiz = list.filter(e => e.total === questions.length);
+  sameQuiz.sort(compareEntries);
+  const rank = sameQuiz.findIndex(e => e.date === lastEntry.date && e.name === lastEntry.name) + 1;
+  const top = sameQuiz.slice(0, 10);
 
   $("end-emoji").textContent = score === questions.length ? "🏆" : score >= 6 ? "🎉" : "💪";
   $("final-score").textContent = `${playerName}, ${fmtScore(score, questions.length)}`;
-  $("my-rank").textContent = `ترتيبك: ${rank > 0 ? rank : "خارج العشرة الأوائل"} من أصل ${filteredList.length} لاعب · الوقت: ${(totalTime / 1000).toFixed(1)}ثا`;
-  
+  $("my-rank").textContent = `ترتيبك: ${rank} من أصل ${sameQuiz.length} لاعب · الوقت: ${(totalTime / 1000).toFixed(1)}ثا`;
+
   renderWinner(top);
   renderPodium(top);
 }
@@ -243,7 +309,7 @@ function renderWinner(list) {
     msg.textContent = "";
     return;
   }
-  if (champ.name === playerName) {
+  if (champ.name === playerName && champ.date === lastEntry.date) {
     msg.textContent = `🎉 مبروك يا ${champ.name}! أنت بطل الصدارة حالياً!`;
   } else {
     msg.textContent = `🎉 مبروك للاعب ${champ.name} تصدره القائمة!`;
@@ -294,19 +360,23 @@ function renderPodium(list) {
   }, 300);
 }
 
+// Live counter: updates automatically whenever anyone finishes a game
+function listenPlayCount() {
+  if (!window.db || !window.onSnapshot) {
+    setTimeout(listenPlayCount, 300);
+    return;
+  }
+  window.onSnapshot(window.collection(window.db, "leaderboard"), snap => {
+    $("play-count").textContent = snap.size;
+  });
+}
+
+// Play again
 $("restart-btn").addEventListener("click", () => {
   $("player-name").value = "";
+  $("name-error").textContent = "";
   $("player-name").focus();
-  renderStartInfo();
   showScreen("start-screen");
 });
 
-function renderStartInfo() {
-  let count = 0;
-  try {
-    count = (JSON.parse(localStorage.getItem(PLAYED_KEY)) || []).length;
-  } catch (e) {}
-  $("play-count").textContent = count;
-}
-
-renderStartInfo();
+window.addEventListener("load", listenPlayCount);
