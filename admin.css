@@ -1,0 +1,45 @@
+/* Admin additions */
+.field {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  font-family: inherit;
+  color: #0b3c5d;
+  background: #f5fbfe;
+  border: 2px solid #cfe9f2;
+  border-radius: 14px;
+  outline: none;
+}
+.field:focus { background: #fff; border-color: #137c86; }
+textarea.field { resize: vertical; }
+
+.link-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.card.admin { align-items: stretch; text-align: right; }
+.card.admin h1, .card.admin h2 { text-align: center; }
+.card.admin h2 { font-size: 20px; }
+#q-editor { display: flex; flex-direction: column; gap: 12px; }
+
+.q-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  background: #f5fbfe;
+  border: 1px solid #cfe9f2;
+  border-radius: 16px;
+}
+.q-head { display: flex; justify-content: space-between; align-items: center; font-weight: 800; }
+.q-del { background: none; border: none; font-size: 18px; cursor: pointer; }
+.opt-row { display: flex; align-items: center; gap: 8px; }
+.opt-row input[type=radio] { width: 20px; height: 20px; accent-color: #16a34a; flex-shrink: 0; }
+.hint { margin: 0; font-size: 13px; color: #64748b; text-align: center; }
+.ok { color: #16a34a !important; }
