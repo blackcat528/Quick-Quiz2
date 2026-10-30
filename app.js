@@ -14,6 +14,7 @@ const questions = [
 const TIME_PER_QUESTION = 30;
 const PLAYED_KEY = "quickQuizPlayed";
 const SOUND_KEY = "quickQuizSound";
+const LEADERBOARD_LIMIT = 50; // max documents read for the end screen
 const $ = id => document.getElementById(id);
 
 let playerName = "";
@@ -28,7 +29,6 @@ let answered = false;
 let totalTime = 0;
 let questionStart = 0;
 let lastEntry = null;
-let liveUnsub = null;
 let reportList = [];
 let reportStats = [];
 let soundOn = localStorage.getItem(SOUND_KEY) !== "off";
@@ -51,7 +51,7 @@ function currentItem() {
 }
 
 function whenReady(fn) {
-  if (window.db && window.getDocs && window.onSnapshot) fn();
+  if (window.db && window.getDocs && window.getCountFromServer) fn();
   else setTimeout(() => whenReady(fn), 200);
 }
 
@@ -211,7 +211,8 @@ async function alreadyPlayedInCloud(name) {
   try {
     const q = window.query(
       window.collection(window.db, "leaderboard"),
-      window.where("nameKey", "==", normalizeName(name))
+      window.where("nameKey", "==", normalizeName(name)),
+      window.limit(1)
     );
     const snap = await window.getDocs(q);
     return !snap.empty;
@@ -227,28 +228,30 @@ function showScreen(id) {
   });
 }
 
-// Live standings shown during the quiz
-function startLiveLeader() {
-  whenReady(() => {
-    if (liveUnsub) return;
-    liveUnsub = window.onSnapshot(window.collection(window.db, "leaderboard"), snap => {
-      const list = [];
-      snap.forEach(d => list.push(d.data()));
-      const same = list.filter(e => e.total === questions.length).sort(compareEntries);
-      const top = same[0];
-      $("live-leader").textContent = top
-        ? `🏅 المتصدر الحالي: ${top.name} · ${getPoints(top)} نقطة`
-        : "🏅 لم يلعب أحد بعد، كن الأول!";
-    });
-  });
-}
-
-function stopLiveLeader() {
-  if (liveUnsub) {
-    liveUnsub();
-    liveUnsub = null;
+// Live leader shown during the quiz: a small query (limit 5), refreshed only
+// at the start and the middle of the quiz instead of a live listener.
+async function refreshLeader() {
+  const box = $("live-leader");
+  try {
+    const q = window.query(
+      window.collection(window.db, "leaderboard"),
+      window.orderBy("points", "desc"),
+      window.limit(5)
+    );
+    const snap = await window.getDocs(q);
+    const list = [];
+    snap.forEach(d => list.push(d.data()));
+    const top = list.filter(e => e.total === questions.length).sort(compareEntries)[0];
+    box.textContent = top
+      ? `🏅 المتصدر الحالي: ${top.name} · ${getPoints(top)} نقطة`
+      : "🏅 لم يلعب أحد بعد، كن الأول!";
+  } catch (e) {
+    console.error("خطأ في جلب المتصدر:", e);
+    box.textContent = "🏅 تعذّر تحميل الترتيب";
   }
 }
+
+function stopLiveLeader() {} // kept so older calls still work (no live listener anymore)
 
 async function startQuiz() {
   const name = $("player-name").value.trim();
@@ -283,7 +286,6 @@ async function startQuiz() {
   startMusic();
   showScreen("game-screen");
   showQuestion();
-  startLiveLeader();
 }
 
 $("start-btn").addEventListener("click", startQuiz);
@@ -344,6 +346,11 @@ function showQuestion() {
 
   setCoach("calm", pick(COACH_TIPS));
   startTimer();
+
+  // Refresh the leader only twice per game (start + middle)
+  if (current === 0 || current === Math.floor(questions.length / 2)) {
+    whenReady(refreshLeader);
+  }
 }
 
 function timeUp() {
@@ -408,7 +415,6 @@ function nextAfterDelay() {
 
 async function finishQuiz() {
   stopTimer();
-  stopLiveLeader();
   sfx.finish();
 
   lastEntry = {
@@ -436,25 +442,39 @@ async function finishQuiz() {
 
 async function loadAndRenderLeaderboard() {
   let list = [];
+  let totalPlayers = 0;
   try {
     if (window.db) {
-      const snap = await window.getDocs(window.collection(window.db, "leaderboard"));
+      const col = window.collection(window.db, "leaderboard");
+      // Only the top N documents are read (not the whole collection)
+      const snap = await window.getDocs(
+        window.query(col, window.orderBy("points", "desc"), window.limit(LEADERBOARD_LIMIT))
+      );
       snap.forEach(d => list.push(d.data()));
+      try {
+        totalPlayers = (await window.getCountFromServer(col)).data().count;
+      } catch (e) {
+        totalPlayers = list.length;
+      }
     }
   } catch (e) {
     console.error("خطأ في جلب لوحة المتصدرين:", e);
   }
+  window.totalPlayers = totalPlayers;
 
   const hasMe = list.some(e => e.date === lastEntry.date && e.name === lastEntry.name);
-  if (!hasMe) list.push(lastEntry);
+  const outsideTop = !hasMe && list.length >= LEADERBOARD_LIMIT;
+  if (!hasMe && !outsideTop) list.push(lastEntry);
 
   const sameQuiz = list.filter(e => e.total === questions.length).sort(compareEntries);
   const rank = sameQuiz.findIndex(e => e.date === lastEntry.date && e.name === lastEntry.name) + 1;
   const top = sameQuiz.slice(0, 10);
+  const all = Math.max(totalPlayers, sameQuiz.length);
 
   $("end-emoji").textContent = score === questions.length ? "🏆" : score >= 6 ? "🎉" : "💪";
   $("final-score").textContent = `${playerName} · ${points} نقطة`;
-  $("my-rank").textContent = `ترتيبك: ${rank} من أصل ${sameQuiz.length} · ${fmtScore(score, questions.length)} · الوقت ${(totalTime / 1000).toFixed(1)}ثا`;
+  const rankText = rank > 0 ? `ترتيبك: ${rank}` : `ترتيبك: خارج أول ${LEADERBOARD_LIMIT}`;
+  $("my-rank").textContent = `${rankText} من أصل ${all} · ${fmtScore(score, questions.length)} · الوقت ${(totalTime / 1000).toFixed(1)}ثا`;
 
   renderBadges(sameQuiz);
   renderWinner(top);
@@ -637,17 +657,17 @@ $("review-btn").addEventListener("click", () => {
 $("back-btn").addEventListener("click", () => showScreen("end-screen"));
 
 function resetToStart() {
-  stopLiveLeader();
   $("player-name").value = "";
   $("name-error").textContent = "";
   $("player-name").focus();
   showScreen("start-screen");
+  loadPlayCount();
 }
 
 $("restart-btn").addEventListener("click", resetToStart);
 $("restart-btn-2").addEventListener("click", resetToStart);
 
-// Teacher report
+// Teacher report (reads everything, but it is only opened by the admin)
 async function openReport() {
   showScreen("report-screen");
   const body = $("report-body");
@@ -735,17 +755,20 @@ function downloadCsv() {
 $("csv-btn").addEventListener("click", downloadCsv);
 $("report-back").addEventListener("click", () => showScreen("start-screen"));
 
-// Live counter on the start screen
-function listenPlayCount() {
-  whenReady(() => {
-    window.onSnapshot(window.collection(window.db, "leaderboard"), snap => {
-      $("play-count").textContent = snap.size;
-    });
+// Counter on the start screen: one aggregate read (no live listener)
+function loadPlayCount() {
+  whenReady(async () => {
+    try {
+      const snap = await window.getCountFromServer(window.collection(window.db, "leaderboard"));
+      $("play-count").textContent = snap.data().count;
+    } catch (e) {
+      console.error("خطأ في جلب عدد اللاعبين:", e);
+    }
   });
 }
 
 window.addEventListener("load", () => {
-  listenPlayCount();
+  loadPlayCount();
   if (new URLSearchParams(location.search).has("report")) {
     whenReady(openReport);
   }

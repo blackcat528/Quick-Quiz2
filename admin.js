@@ -201,7 +201,7 @@
     showScreen("end-screen");
     await loadAndRenderLeaderboard();
 
-    const n = document.querySelectorAll("#players-list .pl-rank").length;
+    const n = window.totalPlayers ?? document.querySelectorAll("#players-list .pl-rank").length;
     $a("end-title").textContent = "لوحة الأوائل";
     $a("end-emoji").textContent = "🏆";
     $a("final-score").textContent = "";

@@ -10,7 +10,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, where, onSnapshot, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, getCountFromServer, query, orderBy, limit, where, onSnapshot, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -31,6 +31,7 @@
     window.collection = collection;
     window.addDoc = addDoc;
     window.getDocs = getDocs;
+    window.getCountFromServer = getCountFromServer;
     window.query = query;
     window.orderBy = orderBy;
     window.limit = limit;
