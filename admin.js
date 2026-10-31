@@ -51,7 +51,8 @@
   function init() {
     loadConfig();
     window.onAuthStateChanged(window.auth, user => {
-      isAdmin = !!user;
+      // Players are signed in anonymously, so only a non-anonymous user is the admin
+      isAdmin = !!user && !user.isAnonymous;
       $a("admin-link").textContent = isAdmin ? "⚙️ لوحة المشرف" : "🔐 المشرف";
     });
   }

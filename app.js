@@ -18,6 +18,7 @@ const LEADERBOARD_LIMIT = 50; // max documents read for the end screen
 const $ = id => document.getElementById(id);
 
 let playerName = "";
+let playerUid = null;   // anonymous-auth UID of this browser
 let order = [];
 let answers = [];       // { q: question index, c: chosen option (-1 = none), t: ms spent }
 let current = 0;
@@ -51,8 +52,20 @@ function currentItem() {
 }
 
 function whenReady(fn) {
-  if (window.db && window.getDocs && window.getCountFromServer) fn();
+  if (window.db && window.auth && window.getDocs && window.getCountFromServer && window.signInAnonymously) fn();
   else setTimeout(() => whenReady(fn), 200);
+}
+
+// Anonymous sign-in: every browser gets its own UID (one attempt per UID)
+async function ensureAuth() {
+  await window.auth.authStateReady(); // wait for a saved session so we don't create a new UID by mistake
+  if (window.auth.currentUser) {
+    playerUid = window.auth.currentUser.uid;
+    return playerUid;
+  }
+  const cred = await window.signInAnonymously(window.auth);
+  playerUid = cred.user.uid;
+  return playerUid;
 }
 
 // Sound (generated in the browser, no files needed)
@@ -265,17 +278,46 @@ async function startQuiz() {
     return;
   }
 
-  $("start-btn").disabled = true;
-  $("name-error").textContent = "جارٍ التحقق من الاسم...";
-  const played = hasPlayed(name) || await alreadyPlayedInCloud(name);
-  $("start-btn").disabled = false;
+  const btn = $("start-btn");
+  btn.disabled = true;
+  $("name-error").textContent = "جارٍ التحقق...";
 
-  if (played) {
-    $("name-error").textContent = "هذا الاسم لعب بالفعل. يمكن لكل لاعب اللعب مرة واحدة فقط.";
-    $("player-name").focus();
+  // 1) Anonymous sign-in
+  try {
+    await ensureAuth();
+  } catch (e) {
+    console.error("Auth error:", e);
+    $("name-error").textContent = "تعذّر التحقق من الجهاز. افتح الرابط في كروم أو سفاري ثم أعد المحاولة.";
+    btn.disabled = false;
     return;
   }
 
+  // 2) Check the name
+  const played = hasPlayed(name) || await alreadyPlayedInCloud(name);
+  if (played) {
+    $("name-error").textContent = "هذا الاسم لعب بالفعل. يمكن لكل لاعب اللعب مرة واحدة فقط.";
+    $("player-name").focus();
+    btn.disabled = false;
+    return;
+  }
+
+  // 3) Reserve the attempt: create succeeds only once per UID (update is blocked by the rules)
+  try {
+    await window.setDoc(window.doc(window.db, "players", playerUid), {
+      name: name,
+      nameKey: normalizeName(name),
+      createdAt: window.serverTimestamp()
+    });
+  } catch (e) {
+    console.error("Players write error:", e);
+    $("name-error").textContent = e && e.code === "permission-denied"
+      ? "لقد لعبت من هذا المتصفح من قبل. لكل لاعب محاولة واحدة فقط."
+      : "تعذّر الاتصال، حاول مرة أخرى.";
+    btn.disabled = false;
+    return;
+  }
+
+  btn.disabled = false;
   playerName = name;
   markPlayed(name);
   order = shuffle(questions.map((_, i) => i));
@@ -422,6 +464,7 @@ async function finishQuiz() {
   sfx.finish();
 
   lastEntry = {
+    uid: playerUid,
     name: playerName,
     nameKey: normalizeName(playerName),
     score: score,
@@ -433,8 +476,8 @@ async function finishQuiz() {
   };
 
   try {
-    if (window.db) {
-      await window.addDoc(window.collection(window.db, "leaderboard"), lastEntry);
+    if (window.db && playerUid) {
+      await window.setDoc(window.doc(window.db, "leaderboard", playerUid), lastEntry);
     }
   } catch (e) {
     console.error("خطأ في حفظ النتيجة بالسحابة:", e);

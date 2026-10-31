@@ -10,8 +10,8 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, getCountFromServer, query, orderBy, limit, where, onSnapshot, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, getCountFromServer, query, orderBy, limit, where, onSnapshot, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+    import { getAuth, signInAnonymously, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDjJWxJVTrwURk2oBvVGy-ngLs9oSceJTs",
@@ -40,6 +40,8 @@
     window.doc = doc;
     window.getDoc = getDoc;
     window.setDoc = setDoc;
+    window.serverTimestamp = serverTimestamp;
+    window.signInAnonymously = signInAnonymously;
     window.signInWithEmailAndPassword = signInWithEmailAndPassword;
     window.signOut = signOut;
     window.onAuthStateChanged = onAuthStateChanged;
