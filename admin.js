@@ -32,11 +32,20 @@
         if (Array.isArray(data.finaleNames) && data.finaleNames.length) {
           finaleNames = data.finaleNames;
         }
+        window.quizOpen = data.open !== false;   // open unless explicitly closed
       }
     } catch (e) {
       console.error("خطأ في جلب الإعدادات:", e);
     }
     renderFinale();
+    applyOpenState();
+  }
+
+  // Disable the start button and show a notice when the quiz is closed
+  function applyOpenState() {
+    const closed = window.quizOpen === false;
+    $a("start-btn").disabled = closed;
+    $a("name-error").textContent = closed ? "⛔ المسابقة مغلقة حالياً." : "";
   }
 
   function init() {
@@ -95,6 +104,7 @@
   function openAdmin() {
     $a("finale-edit").value = finaleNames.join("\n");
     $a("admin-msg").textContent = "";
+    $a("open-toggle").checked = window.quizOpen !== false;
     renderEditor(questions.map(x => ({ q: x.q, options: x.options.slice(), answer: x.answer })));
     showScreen("admin-screen");
   }
@@ -179,7 +189,9 @@
     }
 
     try {
-      await window.setDoc(window.doc(window.db, "config", "quiz"), { questions: qs, finaleNames: names });
+      await window.setDoc(window.doc(window.db, "config", "quiz"), { questions: qs, finaleNames: names, open: $a("open-toggle").checked });
+      window.quizOpen = $a("open-toggle").checked;
+      applyOpenState();
       questions.length = 0;
       questions.push(...qs);
       finaleNames = names;

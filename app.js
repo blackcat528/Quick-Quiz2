@@ -254,6 +254,10 @@ async function refreshLeader() {
 function stopLiveLeader() {} // kept so older calls still work (no live listener anymore)
 
 async function startQuiz() {
+  if (window.quizOpen === false) {
+    $("name-error").textContent = "⛔ المسابقة مغلقة حالياً.";
+    return;
+  }
   const name = $("player-name").value.trim();
   if (name === "") {
     $("name-error").textContent = "الرجاء كتابة اسمك أولاً.";
