@@ -282,6 +282,18 @@ async function startQuiz() {
   btn.disabled = true;
   $("name-error").textContent = "جارٍ التحقق...";
 
+    // فحص حي لحالة الإغلاق (يعمل حتى لو كانت الصفحة مفتوحة من قبل)
+  try {
+    const cfg = await window.getDoc(window.doc(window.db, "config", "quiz"));
+    if (cfg.exists() && cfg.data().open === false) {
+      window.quizOpen = false;
+      $("name-error").textContent = "⛔ المسابقة مغلقة حالياً.";
+      return; // الزر يبقى معطلاً
+    }
+  } catch (e) {
+    console.error("تعذّر فحص حالة المسابقة:", e);
+  }
+
   // 1) Anonymous sign-in
   try {
     await ensureAuth();
