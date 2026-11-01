@@ -267,6 +267,9 @@ async function refreshLeader() {
 function stopLiveLeader() {} // kept so older calls still work (no live listener anymore)
 
 async function startQuiz() {
+  const btn = $("start-btn");
+  if (btn.disabled) return; // يمنع التنفيذ المزدوج (Enter مرتين)
+
   if (window.quizOpen === false) {
     $("name-error").textContent = "⛔ المسابقة مغلقة حالياً.";
     return;
@@ -278,11 +281,10 @@ async function startQuiz() {
     return;
   }
 
-  const btn = $("start-btn");
   btn.disabled = true;
   $("name-error").textContent = "جارٍ التحقق...";
 
-    // فحص حي لحالة الإغلاق (يعمل حتى لو كانت الصفحة مفتوحة من قبل)
+  // فحص حي لحالة الإغلاق (يفشل مغلقاً: إن تعذّر الفحص لا يُسمح باللعب)
   try {
     const cfg = await window.getDoc(window.doc(window.db, "config", "quiz"));
     if (cfg.exists() && cfg.data().open === false) {
@@ -292,6 +294,9 @@ async function startQuiz() {
     }
   } catch (e) {
     console.error("تعذّر فحص حالة المسابقة:", e);
+    $("name-error").textContent = "تعذّر التحقق من حالة المسابقة، حاول مرة أخرى.";
+    btn.disabled = false;
+    return;
   }
 
   // 1) Anonymous sign-in
@@ -299,7 +304,12 @@ async function startQuiz() {
     await ensureAuth();
   } catch (e) {
     console.error("Auth error:", e);
-    $("name-error").textContent = "تعذّر التحقق من الجهاز. افتح الرابط في كروم أو سفاري ثم أعد المحاولة.";
+    const code = e && e.code;
+    $("name-error").textContent =
+      code === "auth/network-request-failed" ? "مشكلة في الاتصال بالإنترنت." :
+      (code === "auth/operation-not-allowed" || code === "auth/unauthorized-domain")
+        ? "إعدادات المسابقة غير مكتملة، أخبر المشرف." :
+      "تعذّر التحقق من الجهاز. افتح الرابط في كروم أو سفاري ثم أعد المحاولة.";
     btn.disabled = false;
     return;
   }
@@ -313,7 +323,7 @@ async function startQuiz() {
     return;
   }
 
-  // 3) Reserve the attempt: create succeeds only once per UID (update is blocked by the rules)
+  // 3) Reserve the attempt
   try {
     await window.setDoc(window.doc(window.db, "players", playerUid), {
       name: name,
@@ -323,7 +333,7 @@ async function startQuiz() {
   } catch (e) {
     console.error("Players write error:", e);
     $("name-error").textContent = e && e.code === "permission-denied"
-      ? "لقد لعبت من هذا المتصفح من قبل. لكل لاعب محاولة واحدة فقط."
+      ? "تعذّر التسجيل: إما أنك لعبت من هذا المتصفح من قبل، أو أن المسابقة أُغلقت."
       : "تعذّر الاتصال، حاول مرة أخرى.";
     btn.disabled = false;
     return;
@@ -345,11 +355,6 @@ async function startQuiz() {
   showScreen("game-screen");
   showQuestion();
 }
-
-$("start-btn").addEventListener("click", startQuiz);
-$("player-name").addEventListener("keydown", e => {
-  if (e.key === "Enter") startQuiz();
-});
 
 function startTimer() {
   stopTimer();
@@ -487,15 +492,18 @@ async function finishQuiz() {
     answers: answers
   };
 
+  let saved = true;
   try {
     if (window.db && playerUid) {
       await window.setDoc(window.doc(window.db, "leaderboard", playerUid), lastEntry);
     }
   } catch (e) {
+    saved = false;
     console.error("خطأ في حفظ النتيجة بالسحابة:", e);
   }
 
   await loadAndRenderLeaderboard();
+  if (!saved) $("my-rank").textContent += " · ⚠️ لم تُحفظ نتيجتك، أخبر المشرف";
   showScreen("end-screen");
 }
 
