@@ -103,6 +103,7 @@
 
   /* ---------- Editor ---------- */
   function openAdmin() {
+    loadPlayCount();
     $a("finale-edit").value = finaleNames.join("\n");
     $a("admin-msg").textContent = "";
     $a("open-toggle").checked = window.quizOpen !== false;
@@ -221,14 +222,17 @@
     $a("my-rank").textContent = `عدد اللاعبين: ${n}`;
     $a("badges").innerHTML = "";
     $a("review-btn").style.display = "none";
+    $a("winner-back-btn").style.display = "";
   }
 
   $a("view-winner-btn").addEventListener("click", viewWinner);
   $a("view-report-btn").addEventListener("click", () => openReport());
 
-  // Restore the normal end screen when leaving the winner view
-  $a("restart-btn").addEventListener("click", () => {
+  // Leaving the winner view returns to the admin panel
+  $a("winner-back-btn").addEventListener("click", () => {
     $a("end-title").textContent = "انتهى الاختبار!";
     $a("review-btn").style.display = "";
+    $a("winner-back-btn").style.display = "none";
+    showScreen("admin-screen");
   });
 })();

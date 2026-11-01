@@ -67,12 +67,6 @@
   <button id="start-btn" class="btn primary">ابدأ</button>
   <button id="admin-link" class="link-btn">🔐 المشرف</button>
 </section>
-
-      <aside class="card info-card">
-        <div class="info-label">عدد الذين لعبوا</div>
-        <div id="play-count" class="play-count">0</div>
-        <div class="team-title">سنة أولى ماستر</div>
-      </aside>
     </div>
 
     <div id="game-screen" class="game-wrap screen">
@@ -123,7 +117,7 @@
 
       <div class="review-actions">
         <button id="review-btn" class="btn primary">مراجعة الإجابات</button>
-        <button id="restart-btn" class="btn">العب مرة أخرى</button>
+        <button id="winner-back-btn" class="btn" style="display:none">رجوع للوحة المشرف</button>
       </div>
     </section>
 
@@ -133,7 +127,6 @@
       <div id="review-list" class="review-list"></div>
       <div class="review-actions">
         <button id="back-btn" class="btn">رجوع إلى النتائج</button>
-        <button id="restart-btn-2" class="btn primary">العب مرة أخرى</button>
       </div>
     </section>
 
@@ -160,6 +153,11 @@
     <!-- Admin: panel -->
     <section id="admin-screen" class="card wide admin screen">
       <h1>⚙️ لوحة المشرف</h1>
+
+      <div class="count-box">
+        <span class="count-label">عدد الذين لعبوا</span>
+        <span id="play-count" class="count-num">0</span>
+      </div>
 
       <label class="open-row"><input type="checkbox" id="open-toggle" checked> المسابقة مفتوحة للاعبين</label>
       <p class="hint">أزل العلامة ثم اضغط "حفظ التعديلات" لإغلاق المسابقة، وضعها لإعادة فتحها.</p>

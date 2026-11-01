@@ -356,6 +356,11 @@ async function startQuiz() {
   showQuestion();
 }
 
+$("start-btn").addEventListener("click", startQuiz);
+$("player-name").addEventListener("keydown", e => {
+  if (e.key === "Enter") startQuiz();
+});
+
 function startTimer() {
   stopTimer();
   timeLeft = TIME_PER_QUESTION;
@@ -723,17 +728,6 @@ $("review-btn").addEventListener("click", () => {
 
 $("back-btn").addEventListener("click", () => showScreen("end-screen"));
 
-function resetToStart() {
-  $("player-name").value = "";
-  $("name-error").textContent = "";
-  $("player-name").focus();
-  showScreen("start-screen");
-  loadPlayCount();
-}
-
-$("restart-btn").addEventListener("click", resetToStart);
-$("restart-btn-2").addEventListener("click", resetToStart);
-
 // Teacher report (reads everything, but it is only opened by the admin)
 async function openReport() {
   showScreen("report-screen");
@@ -822,7 +816,7 @@ function downloadCsv() {
 $("csv-btn").addEventListener("click", downloadCsv);
 $("report-back").addEventListener("click", () => showScreen("start-screen"));
 
-// Counter on the start screen: one aggregate read (no live listener)
+// Play counter: loaded only when the admin panel opens (called from admin.js)
 function loadPlayCount() {
   whenReady(async () => {
     try {
@@ -835,7 +829,6 @@ function loadPlayCount() {
 }
 
 window.addEventListener("load", () => {
-  loadPlayCount();
   if (new URLSearchParams(location.search).has("report")) {
     whenReady(openReport);
   }

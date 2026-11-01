@@ -43,3 +43,16 @@ textarea.field { resize: vertical; }
 .opt-row input[type=radio] { width: 20px; height: 20px; accent-color: #16a34a; flex-shrink: 0; }
 .hint { margin: 0; font-size: 13px; color: #64748b; text-align: center; }
 .ok { color: #16a34a !important; }
+
+.count-box {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 18px;
+  background: #e0f4fa;
+  border: 1px solid #bfe3ee;
+  border-radius: 14px;
+}
+.count-label { font-size: 14px; font-weight: 700; color: #64748b; }
+.count-num { font-size: 26px; font-weight: 800; color: #0e7490; }
