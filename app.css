@@ -570,9 +570,6 @@ h2 {
   .game-wrap { flex-direction: column; align-items: center; }
   .name-card, .info-card, .quiz-card, .coach-card { max-width: 560px; width: 100%; }
 }
-/* Show only the active screen */
-.screen:not(.active) { display: none !important; }
-.screen.active { display: flex; }
 
 /* Show only the active screen */
 .screen:not(.active) { display: none !important; }
@@ -733,30 +730,12 @@ h2 {
   border-radius: 12px;
 }
 
-.credit-fixed {
-  position: fixed;
-  bottom: 12px;
-  left: 12px;
-  padding: 6px 14px;
-  font-size: 13px;
-  color: #0e7490;
-  background: rgba(224, 244, 250, 0.92);
-  border: 1px solid #bfe3ee;
-  border-radius: 999px;
-  box-shadow: 0 6px 14px rgba(14, 90, 99, 0.15);
-  z-index: 10;
-}
-
-.credit-fixed strong {
-  font-weight: 800;
-  color: #0b3c5d;
-}
-
 .logo {
   width: 110px;
   height: 110px;
   filter: drop-shadow(0 10px 20px rgba(19, 124, 134, 0.3));
 }
+
 /* End screen: players list (right) + podium (left) */
 .card.wide.end-card { width: min(900px, 94vw); }
 
@@ -833,4 +812,28 @@ h2 {
 @media (max-width: 800px) {
   .end-layout { flex-direction: column; }
   .end-layout .podium { width: 100%; }
+}
+
+/* Credit box: separate, fixed bottom-right, only on the end screen */
+.credit-end {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  direction: ltr;
+  padding: 12px 22px;
+  font-size: 18px;
+  color: #0e7490;
+  background: rgba(255, 255, 255, 0.96);
+  border: 2px solid #bfe3ee;
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(14, 90, 99, 0.2);
+  z-index: 10;
+}
+
+#end-screen.active + .credit-end { display: block; }
+
+.credit-end strong {
+  font-weight: 800;
+  color: #0b3c5d;
 }
