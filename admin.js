@@ -3,6 +3,7 @@
 (function () {
   const $a = id => document.getElementById(id);
   const DEFAULT_FINALE = ["عدلان", "رحمون"];
+  const TF_OPTIONS = ["صحيح", "خطأ"];
   let isAdmin = false;
   let finaleNames = DEFAULT_FINALE.slice();
 
@@ -107,7 +108,12 @@
     $a("finale-edit").value = finaleNames.join("\n");
     $a("admin-msg").textContent = "";
     $a("open-toggle").checked = window.quizOpen !== false;
-    renderEditor(questions.map(x => ({ q: x.q, options: x.options.slice(), answer: x.answer })));
+    renderEditor(questions.map(x => ({
+      q: x.q,
+      options: x.options.slice(),
+      answer: x.answer,
+      type: x.type === "tf" ? "tf" : "mcq"
+    })));
     showScreen("admin-screen");
   }
 
@@ -115,13 +121,39 @@
     const box = $a("q-editor");
     box.innerHTML = "";
     list.forEach((item, i) => {
+      const isTF = item.type === "tf";
       const wrap = document.createElement("div");
       wrap.className = "q-item";
+      wrap.dataset.type = isTF ? "tf" : "mcq";
 
       const head = document.createElement("div");
       head.className = "q-head";
       const title = document.createElement("span");
       title.textContent = `سؤال ${i + 1}`;
+
+      // Toggle: true/false question
+      const tfLabel = document.createElement("label");
+      tfLabel.className = "tf-toggle";
+      const tfBox = document.createElement("input");
+      tfBox.type = "checkbox";
+      tfBox.className = "tf-check";
+      tfBox.checked = isTF;
+      tfBox.addEventListener("change", () => {
+        const cur = readEditor();
+        const c = cur[i];
+        if (tfBox.checked) {
+          c.type = "tf";
+          c.options = TF_OPTIONS.slice();
+          c.answer = (c.answer === 0 || c.answer === 1) ? c.answer : -1;
+        } else {
+          c.type = "mcq";
+          c.options = ["", "", "", ""];
+          c.answer = -1;
+        }
+        renderEditor(cur);
+      });
+      tfLabel.append(tfBox, document.createTextNode(" سؤال صح / خطأ"));
+
       const del = document.createElement("button");
       del.className = "q-del";
       del.textContent = "🗑️";
@@ -131,16 +163,17 @@
         cur.splice(i, 1);
         renderEditor(cur);
       });
-      head.append(title, del);
+      head.append(title, tfLabel, del);
 
       const qt = document.createElement("textarea");
       qt.className = "field q-text";
       qt.rows = 2;
-      qt.placeholder = "نص السؤال";
+      qt.placeholder = isTF ? "اكتب العبارة (الجملة) التي سيحكم عليها اللاعب" : "نص السؤال";
       qt.value = item.q || "";
       wrap.append(head, qt);
 
-      for (let j = 0; j < 4; j++) {
+      const count = isTF ? 2 : 4;
+      for (let j = 0; j < count; j++) {
         const row = document.createElement("div");
         row.className = "opt-row";
         const radio = document.createElement("input");
@@ -151,8 +184,13 @@
         const inp = document.createElement("input");
         inp.className = "field opt-text";
         inp.type = "text";
-        inp.placeholder = `الخيار ${j + 1}`;
-        inp.value = (item.options && item.options[j]) || "";
+        if (isTF) {
+          inp.value = TF_OPTIONS[j];
+          inp.readOnly = true;
+        } else {
+          inp.placeholder = `الخيار ${j + 1}`;
+          inp.value = (item.options && item.options[j]) || "";
+        }
         row.append(radio, inp);
         wrap.appendChild(row);
       }
@@ -160,34 +198,63 @@
     });
   }
 
+  // Raw read: keeps all slots (used by add/delete so the layout doesn't shift)
   function readEditor() {
     return [...document.querySelectorAll("#q-editor .q-item")].map(el => {
       const checked = el.querySelector("input[type=radio]:checked");
       return {
         q: el.querySelector(".q-text").value.trim(),
         options: [...el.querySelectorAll(".opt-text")].map(x => x.value.trim()),
-        answer: checked ? Number(checked.value) : -1
+        answer: checked ? Number(checked.value) : -1,
+        type: el.dataset.type === "tf" ? "tf" : "mcq"
       };
     });
   }
 
+  // Removes empty options and fixes the correct-answer index.
+  function cleanQuestion(x) {
+    if (x.type === "tf") {
+      return { q: x.q, options: TF_OPTIONS.slice(), answer: x.answer, type: "tf" };
+    }
+    const opts = [];
+    let ans = -1;
+    x.options.forEach((o, j) => {
+      if (!o) return;
+      if (j === x.answer) ans = opts.length;
+      opts.push(o);
+    });
+    return { q: x.q, options: opts, answer: ans, type: "mcq" };
+  }
+
   $a("add-q").addEventListener("click", () => {
     const cur = readEditor();
-    cur.push({ q: "", options: ["", "", "", ""], answer: -1 });
+    cur.push({ q: "", options: ["", "", "", ""], answer: -1, type: "mcq" });
     renderEditor(cur);
   });
 
   $a("save-btn").addEventListener("click", async () => {
     const msg = $a("admin-msg");
     msg.classList.remove("ok");
-    const qs = readEditor();
+    const raw = readEditor();
     const names = $a("finale-edit").value.split("\n").map(s => s.trim()).filter(Boolean);
 
-    if (qs.length === 0) { msg.textContent = "أضف سؤالاً واحداً على الأقل."; return; }
-    for (let i = 0; i < qs.length; i++) {
-      const x = qs[i];
-      if (!x.q || x.options.some(o => !o)) { msg.textContent = `السؤال ${i + 1}: املأ نص السؤال والخيارات الأربعة.`; return; }
-      if (x.answer < 0) { msg.textContent = `السؤال ${i + 1}: اختر الإجابة الصحيحة.`; return; }
+    if (raw.length === 0) { msg.textContent = "أضف سؤالاً واحداً على الأقل."; return; }
+
+    const qs = [];
+    for (let i = 0; i < raw.length; i++) {
+      const x = raw[i];
+      if (!x.q) { msg.textContent = `السؤال ${i + 1}: اكتب نص السؤال.`; return; }
+
+      if (x.type === "tf") {
+        if (x.answer !== 0 && x.answer !== 1) { msg.textContent = `السؤال ${i + 1}: اختر هل العبارة صحيحة أم خاطئة.`; return; }
+      } else {
+        const filled = x.options.filter(Boolean).length;
+        if (filled < 2) { msg.textContent = `السؤال ${i + 1}: اكتب خيارين على الأقل.`; return; }
+        if (x.answer < 0) { msg.textContent = `السؤال ${i + 1}: اختر الإجابة الصحيحة.`; return; }
+        if (!x.options[x.answer]) { msg.textContent = `السؤال ${i + 1}: الإجابة الصحيحة تشير إلى خيار فارغ.`; return; }
+      }
+
+      qs.push(cleanQuestion(x));
     }
 
     try {

@@ -694,6 +694,7 @@ function renderReview() {
   answers.forEach((a, i) => {
     const item = questions[a.q];
     const ok = a.c === item.answer;
+    const isTF = item.type === "tf";
 
     const box = document.createElement("div");
     box.className = `review-item ${ok ? "ok" : "bad"}`;
@@ -715,6 +716,16 @@ function renderReview() {
       right.className = "review-line right";
       right.textContent = `الإجابة الصحيحة: ${item.options[item.answer]}`;
       box.appendChild(right);
+
+      // True/false question: say whether the statement itself is true or false
+      if (isTF) {
+        const verdict = document.createElement("div");
+        verdict.className = "review-line right";
+        verdict.textContent = item.answer === 0
+          ? "✅ الجملة صحيحة"
+          : "❌ الجملة خاطئة";
+        box.appendChild(verdict);
+      }
     }
 
     list.appendChild(box);

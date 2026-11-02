@@ -56,3 +56,15 @@ textarea.field { resize: vertical; }
 }
 .count-label { font-size: 14px; font-weight: 700; color: #64748b; }
 .count-num { font-size: 26px; font-weight: 800; color: #0e7490; }
+
+.tf-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0e7490;
+  cursor: pointer;
+}
+.tf-toggle input { width: 16px; height: 16px; accent-color: #137c86; }
+.opt-text[readonly] { background: #e8f4f8; cursor: default; }
