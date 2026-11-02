@@ -68,3 +68,15 @@ textarea.field { resize: vertical; }
 }
 .tf-toggle input { width: 16px; height: 16px; accent-color: #137c86; }
 .opt-text[readonly] { background: #e8f4f8; cursor: default; }
+
+.tf-verdict { font-weight: 800; }
+.tf-verdict.is-true { color: #15803d; }
+.tf-verdict.is-false { color: #dc2626; }
+
+.review-correction {
+  margin-top: 6px;
+  padding: 8px 12px;
+  color: #92400e;
+  background: #fef3c7;
+  border-radius: 10px;
+}

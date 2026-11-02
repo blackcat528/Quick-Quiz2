@@ -709,6 +709,16 @@ function renderReview() {
     mine.textContent = a.c === -1
       ? "إجابتك: لم تجب (انتهى الوقت)"
       : `إجابتك: ${item.options[a.c]}`;
+
+    // True/false: show the verdict on the statement next to the player's answer
+    if (isTF) {
+      const verdict = document.createElement("span");
+      verdict.className = `tf-verdict ${item.answer === 0 ? "is-true" : "is-false"}`;
+      verdict.textContent = item.answer === 0
+        ? "  ←  انظر: الجملة صحيحة ✅"
+        : "  ←  انظر: الجملة خاطئة ❌";
+      mine.appendChild(verdict);
+    }
     box.appendChild(mine);
 
     if (!ok) {
@@ -716,16 +726,14 @@ function renderReview() {
       right.className = "review-line right";
       right.textContent = `الإجابة الصحيحة: ${item.options[item.answer]}`;
       box.appendChild(right);
+    }
 
-      // True/false question: say whether the statement itself is true or false
-      if (isTF) {
-        const verdict = document.createElement("div");
-        verdict.className = "review-line right";
-        verdict.textContent = item.answer === 0
-          ? "✅ الجملة صحيحة"
-          : "❌ الجملة خاطئة";
-        box.appendChild(verdict);
-      }
+    // True/false with a false statement: show the correct definition
+    if (isTF && item.answer === 1 && item.correction) {
+      const fix = document.createElement("div");
+      fix.className = "review-line review-correction";
+      fix.textContent = `📌 التعريف الصحيح: ${item.correction}`;
+      box.appendChild(fix);
     }
 
     list.appendChild(box);

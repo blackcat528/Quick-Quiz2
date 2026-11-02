@@ -112,7 +112,8 @@
       q: x.q,
       options: x.options.slice(),
       answer: x.answer,
-      type: x.type === "tf" ? "tf" : "mcq"
+      type: x.type === "tf" ? "tf" : "mcq",
+      correction: x.correction || ""
     })));
     showScreen("admin-screen");
   }
@@ -144,11 +145,12 @@
         if (tfBox.checked) {
           c.type = "tf";
           c.options = TF_OPTIONS.slice();
-          c.answer = (c.answer === 0 || c.answer === 1) ? c.answer : -1;
+          c.answer = -1;
         } else {
           c.type = "mcq";
           c.options = ["", "", "", ""];
           c.answer = -1;
+          c.correction = "";
         }
         renderEditor(cur);
       });
@@ -194,6 +196,17 @@
         row.append(radio, inp);
         wrap.appendChild(row);
       }
+
+      // Correct definition (shown to the player in the review)
+      if (isTF) {
+        const cor = document.createElement("textarea");
+        cor.className = "field q-correction";
+        cor.rows = 2;
+        cor.placeholder = "التعريف الصحيح (يظهر للاعب في المراجعة عندما تكون العبارة خاطئة)";
+        cor.value = item.correction || "";
+        wrap.appendChild(cor);
+      }
+
       box.appendChild(wrap);
     });
   }
@@ -202,11 +215,13 @@
   function readEditor() {
     return [...document.querySelectorAll("#q-editor .q-item")].map(el => {
       const checked = el.querySelector("input[type=radio]:checked");
+      const cor = el.querySelector(".q-correction");
       return {
         q: el.querySelector(".q-text").value.trim(),
         options: [...el.querySelectorAll(".opt-text")].map(x => x.value.trim()),
         answer: checked ? Number(checked.value) : -1,
-        type: el.dataset.type === "tf" ? "tf" : "mcq"
+        type: el.dataset.type === "tf" ? "tf" : "mcq",
+        correction: cor ? cor.value.trim() : ""
       };
     });
   }
@@ -214,7 +229,7 @@
   // Removes empty options and fixes the correct-answer index.
   function cleanQuestion(x) {
     if (x.type === "tf") {
-      return { q: x.q, options: TF_OPTIONS.slice(), answer: x.answer, type: "tf" };
+      return { q: x.q, options: TF_OPTIONS.slice(), answer: x.answer, type: "tf", correction: x.correction || "" };
     }
     const opts = [];
     let ans = -1;
@@ -228,7 +243,7 @@
 
   $a("add-q").addEventListener("click", () => {
     const cur = readEditor();
-    cur.push({ q: "", options: ["", "", "", ""], answer: -1, type: "mcq" });
+    cur.push({ q: "", options: ["", "", "", ""], answer: -1, type: "mcq", correction: "" });
     renderEditor(cur);
   });
 
